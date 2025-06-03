@@ -7,7 +7,7 @@ const upload = require("../middlewares/upload");
 const userController = require("../controllers/user");
 const ratingController = require("../controllers/rating");
 const paymentController = require("../controllers/payment");
-const muxController = require("../controllers/muxController");
+const muxController = require("../controllers/mux");
 const { uploadAvatar } = require("../controllers/upload");
 
 //固定路由

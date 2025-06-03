@@ -19,6 +19,6 @@ router.post(
 router.patch("/:coachId", auth, isCoach, isSelf, coachController.patchProfile);
 
 //教練上傳影片
-router.post("/courses/:courseId/video/v1/uploads", auth, isCoach, muxController.uploadVideo);
+router.post("/courses/:chapterId/video/v1/upload", auth, isCoach, muxController.uploadVideo);
 
 module.exports = router;

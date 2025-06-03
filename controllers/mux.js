@@ -11,20 +11,28 @@ const mux = new Mux({
   webhookSecret,
 });
 
-const { signPlayback } = require("./utils/token");
+const { signPlayback } = require("../utils/mux");
 const { getLatestSubscription } = require("../services/checkServices");
 
+//教練上傳影片
 async function uploadVideo(req, res, next) {
   try {
-    // 1) 從 Mux 取得一次性 upload URL
+    const chapterId = req.params.chapterId;
+    // 從 Mux 取得一次性 upload URL
     const upload = await mux.video.uploads.create({
-      cors_origin: process.env.FRONT_ORIGIN,
+      cors_origin: "http://localhost:3000",
       new_asset_settings: {
         playback_policy: ["signed"],
         video_quality: "plus",
       },
     });
-    // 2) 將 uploadUrl 與 uploadId 回傳給前端
+    // 先存一筆暫時資料，記錄 uploadId 與 chapterId 的對應
+    await videoRepo.save({
+      chapter_id: chapterId,
+      mux_upload_id: upload.id,
+      status: "uploading",
+    });
+    // 將 uploadUrl 與 uploadId 回傳給前端
     res.json({ uploadUrl: upload.url, uploadId: upload.id });
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
@@ -48,16 +56,19 @@ async function videoUploadCheck(req, res, next) {
   // 只關心轉檔完成的事件，其它類型可按需擴充
   if (evt.type === "video.asset.ready") {
     const assetId = evt.data.id;
+    const uploadId = evt.data.upload_id;
+    // 查出這個 uploadId 對應哪個 chapter
+    const video = await videoRepo.findOneBy({ mux_upload_id: uploadId });
+    if (!video) return res.status(404).json({ msg: "找不到對應章節" });
     // 建立 signed playbackId
     const playback = await mux.video.assets.createPlaybackId(assetId, {
       policy: "signed",
     });
     //將assetId 與 playbackId存入course_video表
-    const newVideo = await videoRepo.create({
-      mux_asset_id: assetId,
-      mux_playback_id: playback.id,
-    });
-    const data = await videoRepo.save(newVideo);
+    video.mux_asset_id = assetId;
+    video.mux_playback_id = playback.id;
+    video.status = "ready";
+    await videoRepo.save(video);
 
     console.log("✔ asset.ready →", assetId, "→ playback", playback.id);
   }
