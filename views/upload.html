@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Mux video test</title>
+    <script src="https://cdn.jsdelivr.net/npm/@mux/mux-uploader"></script>
+    <style>
+      #uploader {
+        display: none;
+        margin-top: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Mux Uploader</h1>
+    <button id="uploadBtn">選檔並上傳</button>
+    <mux-uploader id="uploader"></mux-uploader>
+
+    <script type="module">
+      // 後端 API：產生一次性 upload URL
+      const API = "http://127.0.0.1:3000/video/v1/uploads";
+      const btn = document.getElementById("uploadBtn");
+      const uploader = document.getElementById("uploader");
+
+      // 點擊按鈕 → 跑完整上傳流程
+      btn.addEventListener("click", async () => {
+        btn.disabled = true;
+        btn.textContent = "產生上傳網址…";
+        const { uploadUrl } = await fetch(API, { method: "POST" }).then((r) =>
+          r.json()
+        );
+        // 將 uploadUrl 套進 <mux-uploader>，並顯示元件
+        uploader.endpoint = uploadUrl;
+        uploader.style.display = "block";
+        btn.style.display = "none";
+
+        uploader.addEventListener(
+          "success",
+          () => {
+            // 🎉 上傳結束，等待 webhook 通知 asset.ready
+            console.log("🎉 上傳結束，等待 webhook 通知 asset.ready");
+            btn.style.display = "inline-block";
+            btn.textContent = "重新上傳";
+            btn.disabled = false;
+            uploader.innerHTML = "";
+            uploader.style.display = "none";
+          },
+          { once: true }
+        );
+      });
+    </script>
+  </body>
+</html>

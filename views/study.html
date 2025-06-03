@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <title>上課頁面 - Sportify+</title>
+    <script src="https://cdn.jsdelivr.net/npm/@mux/mux-player"></script>
+  </head>
+  <body>
+    <!-- 上方導覽列 -->
+    <header>
+      <nav>
+        <span>logo Sportify+</span> | <a href="#">課程分類</a> |
+        <a href="#">教練列表</a> | <a href="class.html">學習中心</a> |
+        <a href="#">使用者姓名</a>
+      </nav>
+    </header>
+
+    <h1>上課頁面</h1>
+
+    <div style="display: flex">
+      <!-- 左側章節列表（僅顯示前三章） -->
+      <aside>
+        <h2>皮拉提斯訓練 - 30天核心強化訓練</h2>
+        <ul>
+          <li>
+            <button
+              onclick="changeVideo('7cbyKE00cWwwtdqjhRyq023JsXAMXc283nvJV1Bkk02jfo')"
+            >
+              Day 1：覺察核心肌群
+            </button>
+          </li>
+          <li>
+            <button
+              onclick="changeVideo('5cvOQumHOZtRj3cnWiDHGDFNdXYhqM4Eej02DkSxQKmE')"
+            >
+              Day 2：深層橫膈膜呼吸
+            </button>
+          </li>
+          <li>
+            <button
+              onclick="changeVideo('iwXI81l5h1a6nWonD2xlH70101hcpFrvpZFC02g5zxdoz00')"
+            >
+              Day 3：死貓式入門
+            </button>
+          </li>
+        </ul>
+      </aside>
+
+      <main style="flex: 1; padding-left: 20px">
+        <h2 id="video-title">Day 1：覺察核心肌群</h2>
+        <mux-player
+          id="muxPlayer"
+          playback-id="7cbyKE00cWwwtdqjhRyq023JsXAMXc283nvJV1Bkk02jfo"
+          stream-type="on-demand"
+          controls
+        ></mux-player>
+      </main>
+
+      <script>
+        const titles = {
+          "7cbyKE00cWwwtdqjhRyq023JsXAMXc283nvJV1Bkk02jfo":
+            "Day 1：覺察核心肌群",
+          "5cvOQumHOZtRj3cnWiDHGDFNdXYhqM4Eej02DkSxQKmE":
+            "Day 2：深層橫膈膜呼吸",
+          iwXI81l5h1a6nWonD2xlH70101hcpFrvpZFC02g5zxdoz00:
+            "Day 3：死貓式入門：找回深層穩定力",
+        };
+
+        async function changeVideo(chapterId) {
+          const res = await fetch(
+            `${BASE_URL}/video/v1/chapters/${chapterId}/stream`,
+            {
+              headers: { Authorization: `Bearer ${localStorage.token}` },
+            }
+          );
+          const { streamUrl, title } = await res.json();
+          document.getElementById("video-title").textContent = title;
+          document.getElementById("muxPlayer").setAttribute("src", streamUrl);
+        }
+      </script>
+    </div>
+  </body>
+</html>
