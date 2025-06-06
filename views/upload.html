@@ -7,7 +7,12 @@
     <style>
       #uploader {
         display: none;
-        margin-top: 1rem;
+        margin: 20px auto;
+        width: 100%;
+        max-width: 600px;
+        height: 300px;
+        border: 2px dashed #ddd;
+        border-radius: 8px;
       }
     </style>
   </head>
@@ -18,12 +23,13 @@
 
     <script type="module">
       //產生一次性 upload URL
-      //手動輸入上傳影片對應的章節id
+      //請記得替換為正確的chapterId
       const chapterId = "81b61daa-e16a-4eaf-85a6-5eca84d6f978";
-      //手動輸入用戶登入token
+      //教練登入token,請記得替換為正確參數
       const token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImI3MGRhZmI4LTNmYjUtNGM0My1iZGU2LTg0YzBlYjc2OTA3YyIsInJvbGUiOiJDT0FDSCIsImlhdCI6MTc0ODk3MjYwMiwiZXhwIjoxNzUxNTY0NjAyfQ.jtaIxAT6iDVBEwxq0ZeBb2Ah7c0iX_4iBpaZGDqkBhw";
-      const API = `http://127.0.0.1:3000/api/v1/coaches/courses/${chapterId}/video/v1/upload`;
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJiY2E3NjQ0LTM4OTktNGUwNi04OWE0LWMzNWY3MzcyODRkMCIsInJvbGUiOiJDT0FDSCIsImlhdCI6MTc0OTIyMDg2MywiZXhwIjoxNzUxODEyODYzfQ._87ce_cG5zjiCzMih5nLWvFqQRlbhSeyx6rQi_7O4PI";
+      //本地測試請改成localhost:3000,搭配ngrok或其他工具接受webhook通知
+      const API = `https://sportify.zeabur.app/api/v1/coaches/courses/${chapterId}/video/v1/upload`;
 
       // 取得btn DOM 元件
       const btn = document.getElementById("uploadBtn");

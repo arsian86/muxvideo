@@ -59,6 +59,6 @@ router.patch("/:userId/rating/:courseId", auth, isUser, isSelf, ratingController
 //取得側邊欄課程章節
 router.get("/courses/:courseId/sidebar", auth, isUser, userController.getCourseChaptersSidebar);
 //取得影片播放資訊
-router.get("/users/courses/:chapterId/video-player", auth, isUser, muxController.getVideoPlayer);
+router.get("/courses/:chapterId/video-player", auth, isUser, muxController.getVideoPlayer);
 
 module.exports = router;

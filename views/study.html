@@ -4,80 +4,69 @@
     <meta charset="UTF-8" />
     <title>上課頁面 - Sportify+</title>
     <script src="https://cdn.jsdelivr.net/npm/@mux/mux-player"></script>
+    <style>
+      /* 🎯 設定播放器尺寸 */
+      #muxPlayer {
+        width: 100%; /* 寬度佔滿容器 */
+        height: 500px; /* 固定高度 */
+        max-width: 1200px; /* 最大寬度限制 */
+        border-radius: 8px; /* 圓角 */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* 陰影 */
+      }
+
+      /* 響應式設計 */
+      @media (max-width: 768px) {
+        #muxPlayer {
+          height: 250px; /* 手機版較小高度 */
+        }
+      }
+
+      /* 容器樣式 */
+      .video-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+    </style>
   </head>
   <body>
-    <!-- 上方導覽列 -->
-    <header>
-      <nav>
-        <span>logo Sportify+</span> | <a href="#">課程分類</a> |
-        <a href="#">教練列表</a> | <a href="class.html">學習中心</a> |
-        <a href="#">使用者姓名</a>
-      </nav>
-    </header>
-
     <h1>上課頁面</h1>
+    <main style="flex: 1; padding-left: 20px">
+      <h2 id="video-title">載入中...</h2>
+      <mux-player id="muxPlayer" controls></mux-player>
+    </main>
+    <script>
+      //user登入token,請記得替換為正確參數
+      const token =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImE4OGIyMTMxLWY2MzgtNDEwMC1hMTM5LTMwMDZlYzA2N2ZkZSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzQ5MjExNTAzLCJleHAiOjE3NTE4MDM1MDN9.ER7dKXK-mPG17yeZ9OPwGvYn-TxD_Egkh6IqYSNrglI";
+      async function loadVideo(chapterId) {
+        try {
+          //本地測試請改成localhost:3000,搭配ngrok或其他工具接受webhook通知
+          const API = `https://sportify.zeabur.app/api/v1/users/courses/${chapterId}/video-player`;
 
-    <div style="display: flex">
-      <!-- 左側章節列表（僅顯示前三章） -->
-      <aside>
-        <h2>皮拉提斯訓練 - 30天核心強化訓練</h2>
-        <ul>
-          <li>
-            <button
-              onclick="changeVideo('7cbyKE00cWwwtdqjhRyq023JsXAMXc283nvJV1Bkk02jfo')"
-            >
-              Day 1：覺察核心肌群
-            </button>
-          </li>
-          <li>
-            <button
-              onclick="changeVideo('5cvOQumHOZtRj3cnWiDHGDFNdXYhqM4Eej02DkSxQKmE')"
-            >
-              Day 2：深層橫膈膜呼吸
-            </button>
-          </li>
-          <li>
-            <button
-              onclick="changeVideo('iwXI81l5h1a6nWonD2xlH70101hcpFrvpZFC02g5zxdoz00')"
-            >
-              Day 3：死貓式入門
-            </button>
-          </li>
-        </ul>
-      </aside>
-
-      <main style="flex: 1; padding-left: 20px">
-        <h2 id="video-title">Day 1：覺察核心肌群</h2>
-        <mux-player
-          id="muxPlayer"
-          playback-id="7cbyKE00cWwwtdqjhRyq023JsXAMXc283nvJV1Bkk02jfo"
-          stream-type="on-demand"
-          controls
-        ></mux-player>
-      </main>
-
-      <script>
-        const titles = {
-          "7cbyKE00cWwwtdqjhRyq023JsXAMXc283nvJV1Bkk02jfo":
-            "Day 1：覺察核心肌群",
-          "5cvOQumHOZtRj3cnWiDHGDFNdXYhqM4Eej02DkSxQKmE":
-            "Day 2：深層橫膈膜呼吸",
-          iwXI81l5h1a6nWonD2xlH70101hcpFrvpZFC02g5zxdoz00:
-            "Day 3：死貓式入門：找回深層穩定力",
-        };
-
-        async function changeVideo(chapterId) {
-          const res = await fetch(
-            `${BASE_URL}/video/v1/chapters/${chapterId}/stream`,
-            {
-              headers: { Authorization: `Bearer ${localStorage.token}` },
-            }
-          );
-          const { streamUrl, title } = await res.json();
-          document.getElementById("video-title").textContent = title;
-          document.getElementById("muxPlayer").setAttribute("src", streamUrl);
+          // 呼叫後端API取得影片播放資訊
+          const res = await fetch(API, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+          const response = await res.json();
+          console.log(response);
+          const { streamUrl, chapter_subtitle } = response.data;
+          document.getElementById("video-title").textContent = chapter_subtitle;
+          const player = document.getElementById("muxPlayer");
+          player.src = streamUrl;
+        } catch (error) {
+          alert("影片載入失敗：" + error.message);
         }
-      </script>
-    </div>
+      }
+
+      window.onload = () => {
+        //請記得替換為正確的chapterId
+        const chapterId = "81b61daa-e16a-4eaf-85a6-5eca84d6f978";
+        loadVideo(chapterId);
+      };
+    </script>
   </body>
 </html>
