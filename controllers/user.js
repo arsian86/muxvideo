@@ -1,15 +1,7 @@
 const bcrypt = require("bcryptjs");
 const cloudinary = require("cloudinary").v2;
-const logger = require("pino")({
-  transport: {
-    target: "pino-pretty",
-    options: {
-      colorize: true,
-      translateTime: "HH:MM:ss",
-      ignore: "pid,hostname",
-    },
-  },
-});
+const logger = require("../config/logger"); // 引入 logger
+
 const { MoreThan, Like, In } = require("typeorm");
 //repo
 const AppDataSource = require("../db/data-source");
@@ -886,9 +878,9 @@ async function getCourseChaptersSidebar(req, res, next) {
 
     // 查詢所有屬於這些章節的影片
     const videos = await videoRepo.find({
-    where: {
-    chapter_subtitle_set_id: In(chapterIds),
-    },
+      where: {
+        chapter_subtitle_set_id: In(chapterIds),
+      },
     });
 
     // 假設你已經有 chapters 跟 videos 兩個陣列
@@ -896,7 +888,7 @@ async function getCourseChaptersSidebar(req, res, next) {
 
     // 1. 建立一個以章節 ID 為 key，影片陣列為 value 的對照表
     const videoListMap = {};
-    videos.forEach(video => {
+    videos.forEach((video) => {
       const key = video.chapter_subtitle_set_id;
       if (!videoListMap[key]) videoListMap[key] = [];
       videoListMap[key].push(video);
@@ -935,9 +927,6 @@ async function getCourseChaptersSidebar(req, res, next) {
     next(error);
   }
 }
-
-
-
 
 module.exports = {
   getProfile,
