@@ -22,7 +22,7 @@ async function uploadVideo(req, res, next) {
 
     // 從 Mux 取得一次性 upload URL
     const upload = await mux.video.uploads.create({
-      cors_origin: "https://sportify.zeabur.app", //必須跟前端的 CORS origin 相同
+      cors_origin: "https://boston.zeabur.app", //必須跟前端的 CORS origin 相同
       new_asset_settings: {
         playback_policy: ["signed"],
         video_quality: "plus",

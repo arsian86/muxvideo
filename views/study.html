@@ -42,7 +42,7 @@
       async function loadVideo(chapterId) {
         try {
           //本地測試請改成localhost:3000,搭配ngrok或其他工具接受webhook通知
-          const API = `https://sportify.zeabur.app/api/v1/users/courses/${chapterId}/video-player`;
+          const API = `https://boston.zeabur.app/api/v1/users/courses/${chapterId}/video-player`;
 
           // 呼叫後端API取得影片播放資訊
           const res = await fetch(API, {
